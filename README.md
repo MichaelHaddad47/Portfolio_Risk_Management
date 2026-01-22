@@ -20,6 +20,6 @@ Key capabilities include:
 
 - Natural-language explanations that translate complex financial metrics into intuitive insights
 
-By combining quantitative risk models with clear visualizations and AI-assisted explanations, the platform aims to make investing more understandable - not by simplifying reality, but by revealing it.
+By combining quantitative risk models with clear visualizations and AI-assisted explanations, the platform aims to make investing more understandable and interesting, especially for new investors.
 
 The ultimate goal is to help users move beyond surface-level performance metrics and develop a deeper intuition for risk, uncertainty, and long-term decision-making.
