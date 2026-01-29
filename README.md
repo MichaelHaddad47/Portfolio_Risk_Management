@@ -23,3 +23,15 @@ Key capabilities include:
 By combining quantitative risk models with clear visualizations and AI-assisted explanations, the platform aims to make investing more understandable and interesting, especially for new investors.
 
 The ultimate goal is to help users move beyond surface-level performance metrics and develop a deeper intuition for risk, uncertainty, and long-term decision-making.
+
+
+## How to Run the Project
+
+### Prerequisites
+- Node.js (LTS recommended)
+- npm
+
+### Setup and Run
+```bash
+npm install
+npm run dev
