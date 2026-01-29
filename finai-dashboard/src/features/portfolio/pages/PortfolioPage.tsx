@@ -2,9 +2,9 @@ import PageShell from "../../../components/layout/PageShell"
 
 export default function PortfolioPage() {
   return (
-    <PageShell title="Portfolio">
+    <PageShell title="Assets">
       <div className="text-zinc-400">
-        Portfolio page online. Asset table coming next.
+        Assets page online. Holdings table coming next.
       </div>
     </PageShell>
   )

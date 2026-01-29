@@ -1,14 +1,84 @@
 import { Routes, Route } from "react-router-dom"
 import DashboardPage from "../features/dashboard/pages/DashboardPage"
 import PortfolioPage from "../features/portfolio/pages/PortfolioPage"
+import PortfolioAccountsPage from "../features/portfolio/pages/PortfolioAccountsPage"
+import RiskDetailsPage from "../features/risk/pages/RiskDetailsPage"
+import PageShell from "../components/layout/PageShell"
 
+type StubProps = {
+	title: string
+	subtitle: string
+}
 
+function StubPage({ title, subtitle }: StubProps) {
+	return (
+		<PageShell title={title}>
+			<div className="text-zinc-400">{subtitle}</div>
+		</PageShell>
+	)
+}
 
 export default function AppRoutes() {
-return (
-<Routes>
-<Route path="/" element={<DashboardPage />} />
-<Route path="/portfolio" element={<PortfolioPage />} />
-</Routes>
-)
+	return (
+		<Routes>
+			<Route path="/" element={<DashboardPage />} />
+			<Route path="/portfolio" element={<PortfolioAccountsPage />} />
+			<Route path="/assets" element={<PortfolioPage />} />
+			<Route path="/risk" element={<RiskDetailsPage />} />
+			<Route
+				path="/advisor"
+				element={
+					<StubPage
+						title="AI Advisor"
+						subtitle="AI advisor workflows will appear here soon."
+					/>
+				}
+			/>
+			<Route
+				path="/news"
+				element={
+					<StubPage
+						title="News & Impact"
+						subtitle="Market news and impact summaries will appear here."
+					/>
+				}
+			/>
+			<Route
+				path="/scenario"
+				element={
+					<StubPage
+						title="Scenario Lab"
+						subtitle="Scenario analysis tools will appear here soon."
+					/>
+				}
+			/>
+			<Route
+				path="/alerts"
+				element={
+					<StubPage
+						title="Alerts"
+						subtitle="Alerts and monitoring will appear here soon."
+					/>
+				}
+			/>
+			<Route
+				path="/connections"
+				element={
+					<StubPage
+						title="Connections"
+						subtitle="Connect your brokerages and accounts here."
+					/>
+				}
+			/>
+			<Route
+				path="/settings"
+				element={
+					<StubPage
+						title="Settings"
+						subtitle="Preferences and configuration will appear here."
+					/>
+				}
+			/>
+		</Routes>
+	)
 }
