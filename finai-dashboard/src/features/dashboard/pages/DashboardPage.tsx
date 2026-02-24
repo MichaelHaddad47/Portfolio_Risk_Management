@@ -15,9 +15,9 @@ export default function DashboardPage() {
         </div>
         <span>•</span>
         <span>4 platforms connected</span>
-      </div>
+  </div>
 
-      {/* Metrics Grid */}
+  {/* Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
         <Card>
           <Metric
@@ -81,7 +81,17 @@ export default function DashboardPage() {
             </div>
           </div>
         </Card>
+  </div>
+
+  {/* Placeholder below chart and AI brief */}
+      <div className="mt-4">
+        <Card>
+          <div className="h-40 flex items-center justify-center rounded-lg bg-zinc-900/40 border border-zinc-800/50 text-sm text-zinc-400">
+            Placeholder for future content
+          </div>
+        </Card>
       </div>
+
     </PageShell>
   )
 }
