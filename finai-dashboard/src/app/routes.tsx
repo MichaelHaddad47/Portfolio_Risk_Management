@@ -4,6 +4,7 @@ import PortfolioPage from "../features/portfolio/pages/PortfolioPage"
 import PortfolioAccountsPage from "../features/portfolio/pages/PortfolioAccountsPage"
 import RiskDetailsPage from "../features/risk/pages/RiskDetailsPage"
 import PageShell from "../components/layout/PageShell"
+import AdvisorPage from "../features/advisor/pages/AdvisorPage"
 
 type StubProps = {
 	title: string
@@ -27,12 +28,7 @@ export default function AppRoutes() {
 			<Route path="/risk" element={<RiskDetailsPage />} />
 			<Route
 				path="/advisor"
-				element={
-					<StubPage
-						title="AI Advisor"
-						subtitle="AI advisor workflows will appear here soon."
-					/>
-				}
+				element={<AdvisorPage />}
 			/>
 			<Route
 				path="/news"
