@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Risk Management Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Portfolio Risk Management Dashboard</h1>
+            <p>Comprehensive Portfolio Diagnostics & Analysis</p>
+        </header>
+
+        <div class="controls">
+            <button id="loadMockBtn" class="btn btn-primary">Load Mock Portfolio</button>
+            <button id="analyzeBtn" class="btn btn-success" disabled>Analyze Portfolio</button>
+        </div>
+
+        <div id="loadingSpinner" class="spinner" style="display: none;"></div>
+
+        <div id="reportContainer" class="report-container" style="display: none;">
+            <!-- Assets Section -->
+            <section class="report-section">
+                <h2>📦 Assets</h2>
+                <div id="assetsDisplay" class="assets-list"></div>
+            </section>
+
+            <!-- Risk Profile -->
+            <section class="report-section">
+                <h2>⚖️ Risk Profile</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <label>Classification</label>
+                        <div class="metric-value" id="riskClass"></div>
+                    </div>
+                    <div class="metric-card">
+                        <label>Volatility</label>
+                        <div class="metric-value" id="volatility"></div>
+                    </div>
+                    <div class="metric-card">
+                        <label>Max Drawdown</label>
+                        <div class="metric-value" id="maxDD"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Risk-Adjusted Performance -->
+            <section class="report-section">
+                <h2>📈 Risk-Adjusted Performance</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <label>Sharpe Ratio</label>
+                        <div class="metric-value" id="sharpe"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Risk Alignment -->
+            <section class="report-section">
+                <h2>🎯 Risk Alignment</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <label>Status</label>
+                        <div class="metric-value" id="alignStatus"></div>
+                    </div>
+                    <div class="metric-card">
+                        <label>User Tolerance</label>
+                        <div class="metric-value" id="userTolerance"></div>
+                    </div>
+                    <div class="metric-card">
+                        <label>Portfolio Risk</label>
+                        <div class="metric-value" id="portRisk"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Diversification -->
+            <section class="report-section">
+                <h2>🧩 Diversification</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <label>Diversification Score</label>
+                        <div class="metric-value" id="divScore"></div>
+                    </div>
+                    <div class="metric-card">
+                        <label>Effective Assets</label>
+                        <div class="metric-value" id="effAssets"></div>
+                    </div>
+                    <div class="metric-card">
+                        <label>Actual Assets</label>
+                        <div class="metric-value" id="actAssets"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Correlation Analysis -->
+            <section class="report-section">
+                <h2>🔗 Correlation Analysis</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <label>Avg Pairwise Correlation</label>
+                        <div class="metric-value" id="avgCorr"></div>
+                    </div>
+                </div>
+                <p id="corrAssessment" class="assessment-text"></p>
+            </section>
+
+            <!-- Risk Concentration -->
+            <section class="report-section">
+                <h2>🔥 Risk Concentration (Top Contributors)</h2>
+                <div id="riskConc" class="concentration-list"></div>
+            </section>
+
+            <!-- Individual Volatility -->
+            <section class="report-section">
+                <h2>📊 Individual Asset Volatility (Annualized)</h2>
+                <div id="indVolatility" class="volatility-list"></div>
+            </section>
+
+            <!-- PCA + Clustering -->
+            <section class="report-section">
+                <h2>🧠 PCA + Clustering Analysis</h2>
+                
+                <h3>Explained Variance</h3>
+                <div id="pcaVariance" class="pca-variance"></div>
+
+                <h3>Asset Loadings (Dominant Factor)</h3>
+                <div id="assetLoadings" class="asset-loadings"></div>
+
+                <h3>Asset Clusters (Behavioral Similarity)</h3>
+                <div id="clusters" class="clusters"></div>
+            </section>
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+</body>
+</html>
