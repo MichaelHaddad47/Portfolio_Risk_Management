@@ -6,6 +6,7 @@ import { ScenarioResultsModal } from '../components/ScenarioResultsModal'
 import { PortfolioEditorForScenario } from '../components/PortfolioEditorForScenario'
 import { HISTORICAL_SCENARIOS } from '../types/scenario.types'
 import PageShell from '../../../components/layout/PageShell'
+import { SpinnerLoader } from '../../../components/ui/SpinnerLoader'
 
 export default function ScenarioLabPage() {
 	const {
@@ -193,11 +194,8 @@ export default function ScenarioLabPage() {
 						)}
 
 						{selectedScenario && isLoading && !scenarioImpact && (
-							<div className="w-full h-[500px] bg-zinc-900/50 rounded-xl border border-zinc-800 p-6 animate-pulse">
-								<div className="h-6 w-56 bg-zinc-800 rounded mb-3" />
-								<div className="h-4 w-80 bg-zinc-800 rounded mb-8" />
-								<div className="h-[380px] w-full bg-gradient-to-t from-zinc-950 to-zinc-900 rounded-xl border border-zinc-800" />
-								<div className="mt-4 text-sm text-zinc-400">Loading scenario timeline... this can take a moment.</div>
+							<div className="w-full h-[500px] bg-zinc-900/50 rounded-xl border border-zinc-800 flex items-center justify-center">
+								<SpinnerLoader size={160} />
 							</div>
 						)}
 

@@ -84,101 +84,135 @@ export function AnimatedScenarioGraph({
 		const ctx = canvas.getContext('2d')
 		if (!ctx) return
 
-		const width = canvas.width
-		const height = canvas.height
-		const padding = 40
+		const W = canvas.width
+		const H = canvas.height
+		const padL = 72, padT = 16, padR = 14, padB = 42
+		const cW = W - padL - padR
+		const cH = H - padT - padB
 
-		// Clear canvas
-		ctx.clearRect(0, 0, width, height)
+		ctx.clearRect(0, 0, W, H)
 
-		// Calculate bounds
 		const allValues = currentData.map(d => d.portfolioValue)
-		const minValue = Math.min(...allValues, startValue)
-		const maxValue = Math.max(...allValues, startValue)
-		const valueRange = maxValue - minValue || 1
+		const rawMin = Math.min(...allValues, startValue)
+		const rawMax = Math.max(...allValues, startValue)
+		const spread = rawMax - rawMin || rawMax * 0.02 || 1
+		const minVal = rawMin - spread * 0.04
+		const maxVal = rawMax + spread * 0.04
+		const valRange = maxVal - minVal
 
-		// Draw grid lines
-		ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)'
+		const xOf = (idx: number) => padL + (cW * idx) / Math.max(1, timeline.length - 1)
+		const yOf = (val: number) => padT + cH * (1 - (val - minVal) / valRange)
+
+		// Horizontal grid lines
+		const ySteps = 5
+		ctx.strokeStyle = 'rgba(255,255,255,0.06)'
 		ctx.lineWidth = 1
-		for (let i = 0; i <= 4; i++) {
-			const y = padding + (height - padding * 2) * (i / 4)
+		for (let i = 0; i <= ySteps; i++) {
+			const y = padT + (cH * i) / ySteps
 			ctx.beginPath()
-			ctx.moveTo(padding, y)
-			ctx.lineTo(width - padding, y)
+			ctx.moveTo(padL, y)
+			ctx.lineTo(W - padR, y)
 			ctx.stroke()
 		}
 
-		// Draw value labels
-		ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
-		ctx.font = '12px system-ui'
+		// Y-axis labels (money)
+		ctx.fillStyle = 'rgba(255,255,255,0.45)'
+		ctx.font = '11px system-ui, -apple-system, sans-serif'
 		ctx.textAlign = 'right'
-		for (let i = 0; i <= 4; i++) {
-			const value = maxValue - (valueRange * i / 4)
-			const y = padding + (height - padding * 2) * (i / 4)
-			ctx.fillText(`$${(value / 1000).toFixed(0)}K`, padding - 10, y + 4)
+		for (let i = 0; i <= ySteps; i++) {
+			const val = maxVal - (valRange * i / ySteps)
+			const y = padT + (cH * i) / ySteps
+			const label = val >= 1_000_000
+				? `$${(val / 1_000_000).toFixed(1)}M`
+				: val >= 1000
+				? `$${(val / 1000).toFixed(0)}K`
+				: `$${val.toFixed(0)}`
+			ctx.fillText(label, padL - 8, y + 4)
 		}
 
-		// Draw the line graph
+		// X-axis date labels (6 evenly spaced from full timeline)
+		const xLabelCount = 6
+		ctx.fillStyle = 'rgba(255,255,255,0.38)'
+		ctx.font = '11px system-ui, -apple-system, sans-serif'
+		for (let i = 0; i <= xLabelCount; i++) {
+			const idx = Math.round((i / xLabelCount) * (timeline.length - 1))
+			const point = timeline[idx]
+			if (!point) continue
+			const x = xOf(idx)
+			const label = new Date(point.date).toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
+			ctx.textAlign = i === 0 ? 'left' : i === xLabelCount ? 'right' : 'center'
+			ctx.fillText(label, x, H - padB + 18)
+		}
+
+		// Draw line
 		const isLosing = currentChange < 0
-		const gradient = ctx.createLinearGradient(0, 0, width, 0)
-		
+		const lineGrad = ctx.createLinearGradient(padL, 0, W - padR, 0)
 		if (isLosing) {
-			gradient.addColorStop(0, 'rgba(239, 68, 68, 1)') // red
-			gradient.addColorStop(1, 'rgba(249, 115, 22, 1)') // orange
+			lineGrad.addColorStop(0, 'rgba(239,68,68,1)')
+			lineGrad.addColorStop(1, 'rgba(249,115,22,1)')
 		} else {
-			gradient.addColorStop(0, 'rgba(34, 197, 94, 1)') // green
-			gradient.addColorStop(1, 'rgba(16, 185, 129, 1)') // emerald
+			lineGrad.addColorStop(0, 'rgba(34,197,94,1)')
+			lineGrad.addColorStop(1, 'rgba(16,185,129,1)')
 		}
-
-		ctx.strokeStyle = gradient
-		ctx.lineWidth = 3
+		ctx.strokeStyle = lineGrad
+		ctx.lineWidth = 2
 		ctx.lineCap = 'round'
 		ctx.lineJoin = 'round'
-
 		ctx.beginPath()
-		currentData.forEach((point, index) => {
-			const x = padding + ((width - padding * 2) * index) / (timeline.length - 1)
-			const y = padding + ((height - padding * 2) * (1 - (point.portfolioValue - minValue) / valueRange))
-
-			if (index === 0) {
-				ctx.moveTo(x, y)
-			} else {
-				ctx.lineTo(x, y)
-			}
+		currentData.forEach((point, idx) => {
+			const x = xOf(idx)
+			const y = yOf(point.portfolioValue)
+			if (idx === 0) ctx.moveTo(x, y)
+			else ctx.lineTo(x, y)
 		})
 		ctx.stroke()
 
-		// Draw fill area under line
-		ctx.lineTo(
-			padding + ((width - padding * 2) * (currentData.length - 1)) / (timeline.length - 1),
-			height - padding
-		)
-		ctx.lineTo(padding, height - padding)
+		// Fill under line
+		ctx.lineTo(xOf(currentData.length - 1), padT + cH)
+		ctx.lineTo(padL, padT + cH)
 		ctx.closePath()
-		
-		const fillGradient = ctx.createLinearGradient(0, padding, 0, height - padding)
+		const fillGrad = ctx.createLinearGradient(0, padT, 0, padT + cH)
 		if (isLosing) {
-			fillGradient.addColorStop(0, 'rgba(239, 68, 68, 0.2)')
-			fillGradient.addColorStop(1, 'rgba(239, 68, 68, 0)')
+			fillGrad.addColorStop(0, 'rgba(239,68,68,0.18)')
+			fillGrad.addColorStop(1, 'rgba(239,68,68,0)')
 		} else {
-			fillGradient.addColorStop(0, 'rgba(34, 197, 94, 0.2)')
-			fillGradient.addColorStop(1, 'rgba(34, 197, 94, 0)')
+			fillGrad.addColorStop(0, 'rgba(34,197,94,0.18)')
+			fillGrad.addColorStop(1, 'rgba(34,197,94,0)')
 		}
-		ctx.fillStyle = fillGradient
+		ctx.fillStyle = fillGrad
 		ctx.fill()
 
-		// Draw current/hover point
-		const pointIndex = Math.max(0, Math.min(hoverIndex ?? (currentData.length - 1), currentData.length - 1))
-		const pointValue = currentData[pointIndex]?.portfolioValue ?? currentValue
-		const lastX = padding + ((width - padding * 2) * pointIndex) / Math.max(1, (timeline.length - 1))
-		const lastY = padding + ((height - padding * 2) * (1 - (pointValue - minValue) / valueRange))
-		
+		// Hover: dashed vertical crosshair + date label drawn on canvas
+		if (hoverIndex !== null && hoverIndex >= 0 && hoverIndex < currentData.length) {
+			const hx = xOf(hoverIndex)
+			ctx.save()
+			ctx.strokeStyle = 'rgba(255,255,255,0.22)'
+			ctx.lineWidth = 1
+			ctx.setLineDash([4, 5])
+			ctx.beginPath()
+			ctx.moveTo(hx, padT)
+			ctx.lineTo(hx, padT + cH)
+			ctx.stroke()
+			ctx.setLineDash([])
+			ctx.restore()
+			const hDate = new Date(currentData[hoverIndex].date)
+			const dateStr = hDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })
+			const labelX = Math.min(Math.max(hx, padL + 32), W - padR - 32)
+			ctx.fillStyle = 'rgba(255,255,255,0.9)'
+			ctx.font = 'bold 11px system-ui, -apple-system, sans-serif'
+			ctx.textAlign = 'center'
+			ctx.fillText(dateStr, labelX, H - padB + 18)
+		}
+
+		// Point circle — smaller (3.5 px)
+		const ptIdx = Math.max(0, Math.min(hoverIndex ?? currentData.length - 1, currentData.length - 1))
+		const ptVal = currentData[ptIdx]?.portfolioValue ?? currentValue
 		ctx.beginPath()
-		ctx.arc(lastX, lastY, 6, 0, Math.PI * 2)
+		ctx.arc(xOf(ptIdx), yOf(ptVal), 3.5, 0, Math.PI * 2)
 		ctx.fillStyle = isLosing ? '#ef4444' : '#22c55e'
 		ctx.fill()
-		ctx.strokeStyle = 'white'
-		ctx.lineWidth = 2
+		ctx.strokeStyle = 'rgba(255,255,255,0.85)'
+		ctx.lineWidth = 1.5
 		ctx.stroke()
 
 	}, [currentData, startValue, timeline.length, currentValue, currentChange, hoverIndex])
@@ -188,10 +222,10 @@ export function AnimatedScenarioGraph({
 		const rect = canvasRef.current.getBoundingClientRect()
 		const ratio = canvasRef.current.width / rect.width
 		const x = (event.clientX - rect.left) * ratio
-		const width = canvasRef.current.width
-		const padding = 40
-		const clampedX = Math.min(Math.max(x, padding), width - padding)
-		const percent = (clampedX - padding) / (width - padding * 2)
+		const padL = 72, padR = 14
+		const W = canvasRef.current.width
+		const clampedX = Math.min(Math.max(x, padL), W - padR)
+		const percent = (clampedX - padL) / (W - padL - padR)
 		const index = Math.round(percent * (timeline.length - 1))
 		setHoverIndex(index)
 	}
@@ -200,10 +234,6 @@ export function AnimatedScenarioGraph({
 		if (!isComplete) return
 		setHoverIndex(null)
 	}
-
-	const hoverLeftPercent = timeline.length > 1
-		? ((Math.max(0, Math.min(inspectIndex, timeline.length - 1))) / (timeline.length - 1)) * 100
-		: 0
 
 	return (
 		<div className="relative w-full h-full">
@@ -219,16 +249,6 @@ export function AnimatedScenarioGraph({
 						{inspectChange >= 0 ? '+' : ''}{inspectChange.toFixed(2)}%
 					</div>
 				</div>
-
-				{isComplete && inspectPoint && (
-					<div
-						className="absolute top-6 z-10 -translate-x-1/2 rounded-lg border border-zinc-700 bg-zinc-900/95 px-3 py-2 text-xs text-zinc-200 pointer-events-none"
-						style={{ left: `${Math.min(Math.max(hoverLeftPercent, 8), 92)}%` }}
-					>
-						<div className="font-semibold text-white">${inspectValue.toFixed(2)}</div>
-						<div className="text-zinc-400">{new Date(inspectPoint.date).toLocaleDateString('en-US')}</div>
-					</div>
-				)}
 
 				{/* Canvas */}
 				<canvas
