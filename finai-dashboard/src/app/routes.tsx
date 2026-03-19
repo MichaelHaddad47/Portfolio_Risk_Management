@@ -8,6 +8,9 @@ import RiskDetailsPage from "../features/risk/pages/RiskDetailsPage"
 import PageShell from "../components/layout/PageShell"
 import AdvisorPage from "../features/advisor/pages/AdvisorPage"
 import ScenarioLabPage from "../features/scenario/pages/ScenarioLabPage"
+import AlertsPage from "../features/alerts/pages/AlertsPage"
+import ConnectionsPage from "../features/connections/pages/ConnectionsPage"
+import SettingsPage from "../features/settings/pages/SettingsPage"
 
 type StubProps = {
 	title: string
@@ -51,30 +54,15 @@ export default function AppRoutes() {
 			/>
 			<Route
 				path="/alerts"
-				element={
-					<StubPage
-						title="Alerts"
-						subtitle="Alerts and monitoring will appear here soon."
-					/>
-				}
+				element={<AlertsPage />}
 			/>
 			<Route
 				path="/connections"
-				element={
-					<StubPage
-						title="Connections"
-						subtitle="Connect your brokerages and accounts here."
-					/>
-				}
+				element={<ConnectionsPage />}
 			/>
 			<Route
 				path="/settings"
-				element={
-					<StubPage
-						title="Settings"
-						subtitle="Preferences and configuration will appear here."
-					/>
-				}
+				element={<SettingsPage />}
 			/>
 		</Routes>
 	)
